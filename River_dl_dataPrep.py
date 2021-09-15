@@ -17,7 +17,6 @@ import sciencebasepy
 import tarfile
 import zipfile
 
-os.chdir(r'C:\Users\jbarclay\OneDrive - DOI\StreamTemp\Analysis\Data\ScienceBaseData')
 
 #track the files that need to tarred
 filesToTar = []
