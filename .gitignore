@@ -1,0 +1,10 @@
+flow*.csv
+temp*.csv
+sntemp*
+reach_*
+obs*/
+flow*/
+temp*/
+*.zip
+*.tar
+
