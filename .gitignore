@@ -7,4 +7,6 @@ flow*/
 temp*/
 *.zip
 *.tar
-
+*.txt
+data*/
+.snakemake/

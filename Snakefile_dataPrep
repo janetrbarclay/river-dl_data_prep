@@ -1,0 +1,109 @@
+import os
+
+from getSciencebaseItems import get_sciencebase_data
+from makeArrays import makeArrays
+
+
+out_dir = config['outDir']
+
+subSetList = ["full"]
+if len(config['subsetDict'])>0:
+	subSetList.extend(config['subsetDict'].keys())
+	
+dataFileList = [os.path.splitext(x)[0] for x in config['itemDict'].keys()]
+
+
+
+rule all:
+	input:
+		expand("{outdir}/{dataFile}.csv",
+			outdir = out_dir,
+			dataFile = dataFileList,
+			),
+		expand("{outdir}/{dataFile}_{subSet}",
+			outdir = out_dir,
+			dataFile = dataFileList,
+			subSet = subSetList,
+			sbFiles = config['itemDict'].keys()
+			),
+		expand("{outdir}/Obs_temp_flow_drb_{subSet}",
+			outdir = out_dir,
+			subSet = subSetList,
+			),
+		
+
+rule fetch_data:
+	output:
+		"{outdir}/{dataFile}.csv"
+	run:
+		get_sciencebase_data(config['itemDict'][wildcards.dataFile+".zip"],wildcards.dataFile+".zip",wildcards.outdir, output[0])
+
+		
+rule make_sntemp_arrays:
+	input:
+		os.path.join(out_dir,"sntemp_inputs_outputs_drb.csv")
+	output:
+		directory(expand("{outdir}/{dataFile}_{subSet}",
+			outdir = out_dir,
+			dataFile = "sntemp_inputs_outputs_drb",
+			subSet = subSetList))
+	run:
+		makeArrays("sntemp_inputs_outputs_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir)
+		
+rule make_temp_arrays:
+	input:
+		os.path.join(out_dir,"temperature_observations_drb.csv")
+	output:
+		directory(expand("{outdir}/{dataFile}_{subSet}",
+			outdir = out_dir,
+			dataFile = "temperature_observations_drb",
+			subSet = subSetList))
+	run:
+		makeArrays("temperature_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir)
+		
+rule make_flow_arrays:
+	input:
+		os.path.join(out_dir,"flow_observations_drb.csv")
+	output:
+		directory(expand("{outdir}/{dataFile}_{subSet}",
+			outdir = out_dir,
+			dataFile = "flow_observations_drb",
+			subSet = subSetList))
+	run:
+		makeArrays("flow_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir)		
+
+		
+rule make_combined_arrays:
+	input:
+		os.path.join(out_dir,"temperature_observations_drb.csv"),
+		os.path.join(out_dir,"flow_observations_drb.csv"),
+	output:
+		directory(expand("{outdir}/{dataFile}_{subSet}",
+			outdir = out_dir,
+			dataFile = "Obs_temp_flow_drb",
+			subSet = subSetList))
+	run:
+		makeArrays("Obs_temp_flow_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir)
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
