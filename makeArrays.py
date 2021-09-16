@@ -21,7 +21,8 @@ def tardir(path, tar_name):
 def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles = False, outPath="",segsToExclude=[]):    
     #read in the data
     tempDF = pd.read_csv(fileName[0].replace(".zip",".csv"))
-    colsToDrop = ['subseg_id','site_id','in_time_holdout','in_space_holdout','test']
+    colsToDrop = ['subseg_id','site_id','in_time_holdout','in_space_holdout','test','min_temp_c',
+       'max_temp_c']
     if any([x in tempDF.columns for x in colsToDrop]):
         tempDF.drop(columns=colsToDrop, errors="ignore", inplace=True)
         
@@ -44,6 +45,10 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
 
     #remove excluded segments
     tempDF = tempDF[~tempDF.seg_id_nat.isin(segsToExclude)]
+    
+    #change the column name of water
+    if "mean_temp_c" in tempDF.columns:
+        tempDF.rename(columns={'mean_temp_c':'temp_c'},inplace=True)
     
     outTxt = arrayName
     outTxt = outTxt + "\n\n"+"Data Summary"
