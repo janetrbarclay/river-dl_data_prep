@@ -18,7 +18,7 @@ def tardir(path, tar_name):
             for file in files:
                 tar_handle.add(os.path.join(root, file))
 
-def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles = False, outPath=""):    
+def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles = False, outPath="",segsToExclude=[]):    
     #read in the data
     tempDF = pd.read_csv(fileName[0].replace(".zip",".csv"))
     colsToDrop = ['subseg_id','site_id','in_time_holdout','in_space_holdout','test']
@@ -42,8 +42,8 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
             if any([x in tempDF.columns for x in colsToDrop]):
                 tempDF.drop(columns=colsToDrop, errors="ignore", inplace=True)
 
-    
-    
+    #remove excluded segments
+    tempDF = tempDF[~tempDF.seg_id_nat.isin(segsToExclude)]
     
     outTxt = arrayName
     outTxt = outTxt + "\n\n"+"Data Summary"

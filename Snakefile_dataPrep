@@ -48,7 +48,7 @@ rule make_sntemp_arrays:
 			dataFile = "sntemp_inputs_outputs_drb",
 			subSet = subSetList))
 	run:
-		makeArrays("sntemp_inputs_outputs_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir)
+		makeArrays("sntemp_inputs_outputs_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'])
 		
 rule make_temp_arrays:
 	input:
@@ -59,7 +59,7 @@ rule make_temp_arrays:
 			dataFile = "temperature_observations_drb",
 			subSet = subSetList))
 	run:
-		makeArrays("temperature_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir)
+		makeArrays("temperature_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'])
 		
 rule make_flow_arrays:
 	input:
@@ -70,7 +70,7 @@ rule make_flow_arrays:
 			dataFile = "flow_observations_drb",
 			subSet = subSetList))
 	run:
-		makeArrays("flow_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir)		
+		makeArrays("flow_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'])		
 
 		
 rule make_combined_arrays:
@@ -83,7 +83,7 @@ rule make_combined_arrays:
 			dataFile = "Obs_temp_flow_drb",
 			subSet = subSetList))
 	run:
-		makeArrays("Obs_temp_flow_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir)
+		makeArrays("Obs_temp_flow_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'])
 		
 		
 		
