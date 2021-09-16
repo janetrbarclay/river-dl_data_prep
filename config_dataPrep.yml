@@ -7,6 +7,6 @@ subsetDict:
     Christiana: "ChristianaReaches.csv"
 
 
-outDir: "dataDir"
+outDir: "../river-dl/data_DRB" 
 
-tarFiles: True
+tarFiles: False 

@@ -9,9 +9,10 @@ import os
 import numpy as np
 import pandas as pd
 import xarray as xr
-import tarfile
+
 
 def tardir(path, tar_name):
+    import tarfile
     with tarfile.open(tar_name, "w") as tar_handle:
         for root, dirs, files in os.walk(path):
             for file in files:
