@@ -27,16 +27,16 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
         
     #change the date formate
     if "date" in tempDF.columns:
-#        tempDF.date=tempDF.date.astype('datetime64[ns]')
-        tempDF['date'] = pd.to_datetime(tempDF.date, utc=True)
+        tempDF.date=tempDF.date.astype('datetime64[ns]')
+#        tempDF['date'] = pd.to_datetime(tempDF.date, utc=True)
         
     if len(fileName)>1:
         for thisFile in fileName[1:]:
             tempDF2 = pd.read_csv(thisFile.replace(".zip",".csv"))
             #change the date formate
             if "date" in tempDF2.columns:
-        #        tempDF.date=tempDF.date.astype('datetime64[ns]')
-                tempDF2['date'] = pd.to_datetime(tempDF2.date, utc=True)
+                tempDF2.date=tempDF2.date.astype('datetime64[ns]')
+#                tempDF2['date'] = pd.to_datetime(tempDF2.date, utc=True)
             tempDF = tempDF.merge(tempDF2,how="outer", on=["seg_id_nat","date"])
             #this is repeated b/c they may have been introduced by the merge
             if any([x in tempDF.columns for x in colsToDrop]):
