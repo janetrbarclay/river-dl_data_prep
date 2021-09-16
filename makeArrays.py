@@ -54,9 +54,9 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
         tempDF.loc[(tempDF.seg_tave_water<(-50)),"seg_tave_water"]=np.nan
         tempDF.loc[(tempDF.seg_tave_water>(50)),"seg_tave_water"]=np.nan
         
-    if "seg_tave_air" in tempDF.columns:
-        tempDF.loc[(tempDF.seg_tave_air<(-50)),"seg_tave_air"]=np.nan
-        tempDF.loc[(tempDF.seg_tave_air>(50)),"seg_tave_air"]=np.nan
+#    if "seg_tave_air" in tempDF.columns:
+#        tempDF.loc[(tempDF.seg_tave_air<(-50)),"seg_tave_air"]=np.nan
+#        tempDF.loc[(tempDF.seg_tave_air>(50)),"seg_tave_air"]=np.nan
         
     for thisCol in tempDF.columns:
         if thisCol!="seg_id_nat":

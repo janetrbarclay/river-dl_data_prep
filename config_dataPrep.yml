@@ -12,5 +12,5 @@ outDir: "../river-dl/data_DRB"
 
 tarFiles: False 
 
-segsToExclude: [3558]
+segsToExclude: []
 
