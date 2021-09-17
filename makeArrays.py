@@ -18,7 +18,7 @@ def tardir(path, tar_name):
             for file in files:
                 tar_handle.add(os.path.join(root, file))
 
-def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles = False, outPath="",segsToExclude=[]):    
+def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles = False, outPath="",segsToExclude=[], suffix = ""):    
     #read in the data
     tempDF = pd.read_csv(fileName[0].replace(".zip",".csv"))
     colsToDrop = ['subseg_id','site_id','in_time_holdout','in_space_holdout','test','min_temp_c',
@@ -85,20 +85,20 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
             nDates = len(np.unique(tempDF_subset.date))
             tempDF_subset.set_index(['date','seg_id_nat'],inplace=True, drop=True)
             tempArr_subset = tempDF_subset.to_xarray().chunk({'seg_id_nat':nSegs,'date':nDates})
-            tempArr_subset.to_zarr(os.path.join(outPath,arrayName+"_"+thisSubset), mode='w')
+            tempArr_subset.to_zarr(os.path.join(outPath,arrayName+"_"+thisSubset+suffix), mode='w')
             
             if tarFiles:
-                tardir(os.path.join(outPath,arrayName+"_"+thisSubset),os.path.join(outPath,arrayName+"_"+thisSubset+".tar"))
+                tardir(os.path.join(outPath,arrayName+"_"+thisSubset+suffix),os.path.join(outPath,arrayName+"_"+thisSubset+suffix+".tar"))
         
     
     nSegs = len(np.unique(tempDF.seg_id_nat))
     nDates = len(np.unique(tempDF.date))
     tempDF.set_index(['date','seg_id_nat'],inplace=True, drop=True)
     tempArr = tempDF.to_xarray().chunk({'seg_id_nat':nSegs,'date':nDates})
-    tempArr.to_zarr(os.path.join(outPath,arrayName+"_full"), mode='w')
+    tempArr.to_zarr(os.path.join(outPath,arrayName+"_full"+suffix), mode='w')
     if tarFiles:
-            tardir(os.path.join(outPath,arrayName+"_full"),os.path.join(outPath,arrayName+"_full"+".tar"))
+            tardir(os.path.join(outPath,arrayName+"_full"+suffix),os.path.join(outPath,arrayName+"_full"+suffix+".tar"))
             
             
-    with open("log_%s.txt"%arrayName,"w+") as f:
+    with open("log_%s%s.txt"%(arrayName,suffix),"w+") as f:
         f.write(outTxt)

@@ -12,6 +12,7 @@ if len(config['subsetDict'])>0:
 	
 dataFileList = [os.path.splitext(x)[0] for x in config['itemDict'].keys()]
 
+suffix = "_"+config['suffix'] if config['suffix']!="" else ""
 
 
 rule all:
@@ -20,15 +21,17 @@ rule all:
 			outdir = out_dir,
 			dataFile = dataFileList,
 			),
-		expand("{outdir}/{dataFile}_{subSet}",
+		expand("{outdir}/{dataFile}_{subSet}{thisSuffix}",
 			outdir = out_dir,
 			dataFile = dataFileList,
 			subSet = subSetList,
+                        thisSuffix = suffix,
 			sbFiles = config['itemDict'].keys()
 			),
-		expand("{outdir}/Obs_temp_flow_drb_{subSet}",
+		expand("{outdir}/Obs_temp_flow_drb_{subSet}{thisSuffix}",
 			outdir = out_dir,
 			subSet = subSetList,
+                        thisSuffix = suffix
 			),
 		
 
@@ -43,34 +46,37 @@ rule make_sntemp_arrays:
 	input:
 		os.path.join(out_dir,"sntemp_inputs_outputs_drb.csv")
 	output:
-		directory(expand("{outdir}/{dataFile}_{subSet}",
+		directory(expand("{outdir}/{dataFile}_{subSet}{thisSuffix}",
 			outdir = out_dir,
 			dataFile = "sntemp_inputs_outputs_drb",
+                        thisSuffix = suffix,
 			subSet = subSetList))
 	run:
-		makeArrays("sntemp_inputs_outputs_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'])
+		makeArrays("sntemp_inputs_outputs_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'], suffix)
 		
 rule make_temp_arrays:
 	input:
 		os.path.join(out_dir,"temperature_observations_drb.csv")
 	output:
-		directory(expand("{outdir}/{dataFile}_{subSet}",
+		directory(expand("{outdir}/{dataFile}_{subSet}{thisSuffix}",
 			outdir = out_dir,
 			dataFile = "temperature_observations_drb",
+                        thisSuffix = suffix,
 			subSet = subSetList))
 	run:
-		makeArrays("temperature_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'])
+		makeArrays("temperature_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'],suffix)
 		
 rule make_flow_arrays:
 	input:
 		os.path.join(out_dir,"flow_observations_drb.csv")
 	output:
-		directory(expand("{outdir}/{dataFile}_{subSet}",
+		directory(expand("{outdir}/{dataFile}_{subSet}{thisSuffix}",
 			outdir = out_dir,
 			dataFile = "flow_observations_drb",
-			subSet = subSetList))
+			subSet = subSetList,
+                        thisSuffix = suffix))
 	run:
-		makeArrays("flow_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'])		
+		makeArrays("flow_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'],suffix)		
 
 		
 rule make_combined_arrays:
@@ -78,12 +84,13 @@ rule make_combined_arrays:
 		os.path.join(out_dir,"temperature_observations_drb.csv"),
 		os.path.join(out_dir,"flow_observations_drb.csv"),
 	output:
-		directory(expand("{outdir}/{dataFile}_{subSet}",
+		directory(expand("{outdir}/{dataFile}_{subSet}{thisSuffix}",
 			outdir = out_dir,
 			dataFile = "Obs_temp_flow_drb",
-			subSet = subSetList))
+			subSet = subSetList,
+                        thisSuffix = suffix))
 	run:
-		makeArrays("Obs_temp_flow_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'])
+		makeArrays("Obs_temp_flow_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'], suffix)
 		
 		
 		

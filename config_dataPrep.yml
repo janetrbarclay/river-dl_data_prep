@@ -9,8 +9,11 @@ subsetDict:
 
 outDir: "../river-dl/data_DRB" 
 
+#suffix added to the end of the output files
+suffix: "no3558" 
+#suffix: ""
 
 tarFiles: False 
 
-segsToExclude: []
-
+segsToExclude: [3558]
+#segsToExclude: []
