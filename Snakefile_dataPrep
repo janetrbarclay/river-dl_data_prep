@@ -56,7 +56,7 @@ rule make_sntemp_arrays:
                         thisSuffix = suffix,
 			subSet = subSetList))
 	run:
-		makeArrays("sntemp_inputs_outputs_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'], suffix)
+		makeArrays("sntemp_inputs_outputs_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'], suffix, config['qaDict'])
 		
 rule make_temp_arrays:
 	input:
@@ -68,7 +68,7 @@ rule make_temp_arrays:
                         thisSuffix = suffix,
 			subSet = subSetList))
 	run:
-		makeArrays("temperature_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'],suffix)
+		makeArrays("temperature_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'],suffix, config['qaDict'])
 		
 rule make_flow_arrays:
 	input:
@@ -80,7 +80,7 @@ rule make_flow_arrays:
 			subSet = subSetList,
                         thisSuffix = suffix))
 	run:
-		makeArrays("flow_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'],suffix)		
+		makeArrays("flow_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'],suffix, config['qaDict'])		
 
 		
 rule make_combined_arrays:
@@ -94,7 +94,7 @@ rule make_combined_arrays:
 			subSet = subSetList,
                         thisSuffix = suffix))
 	run:
-		makeArrays("Obs_temp_flow_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'], suffix)
+		makeArrays("Obs_temp_flow_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'], suffix, config['qaDict'])
 		
 		
 rule make_distance_matrix:

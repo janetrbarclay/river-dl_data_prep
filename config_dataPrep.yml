@@ -7,14 +7,20 @@ itemDict:
 subsetDict: 
     Christiana: "ChristianaReaches.csv"
 
+#this contains the min and max values for the noted variables. values above / below these are set to na
+qaDict:
+    seg_tave_water:
+        min: -50
+        max: 50
+
 
 outDir: "../river-dl/data_DRB" 
 
 #suffix added to the end of the output files
-#suffix: "no3558" 
-suffix: ""
+suffix: "no3558" 
+#suffix: ""
 
 tarFiles: False 
 
-#segsToExclude: [3558]
-segsToExclude: []
+segsToExclude: [3558]
+#segsToExclude: []

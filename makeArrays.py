@@ -18,7 +18,7 @@ def tardir(path, tar_name):
             for file in files:
                 tar_handle.add(os.path.join(root, file))
 
-def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles = False, outPath="",segsToExclude=[], suffix = ""):    
+def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles = False, outPath="",segsToExclude=[], suffix = "", qaDict={}):    
     #read in the data
     tempDF = pd.read_csv(fileName[0].replace(".zip",".csv"))
     colsToDrop = ['subseg_id','site_id','in_time_holdout','in_space_holdout','test','min_temp_c',
@@ -54,10 +54,11 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
     outTxt = outTxt + "\n\n"+"Data Summary"
     outTxt = outTxt + "\n\n"+"Number of rows: " + str(tempDF.shape[0])
 
-    #ensure the sntemp water and air temps are reasonable
-    if "seg_tave_water" in tempDF.columns:
-        tempDF.loc[(tempDF.seg_tave_water<(-50)),"seg_tave_water"]=np.nan
-        tempDF.loc[(tempDF.seg_tave_water>(50)),"seg_tave_water"]=np.nan
+    #ensure the variables are reasonable
+    for thisVar in qaDict.keys():
+        if thisVar in tempDF.columns:
+            tempDF.loc[(tempDF[thisVar]<(qaDict[thisVar]["min"])),thisVar]=np.nan
+            tempDF.loc[(tempDF[thisVar]>(qaDict[thisVar]["max"])),thisVar]=np.nan
         
 #    if "seg_tave_air" in tempDF.columns:
 #        tempDF.loc[(tempDF.seg_tave_air<(-50)),"seg_tave_air"]=np.nan
