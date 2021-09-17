@@ -1,5 +1,6 @@
 itemDict:
     'sntemp_inputs_outputs_drb.zip': '5f6a289982ce38aaa2449135'
+    'distance_matrix_drb.csv': '5f6a289982ce38aaa2449135'
     'temperature_observations_drb.zip': '5f6a287382ce38aaa2449131'
     'flow_observations_drb.zip': '5f6a287382ce38aaa2449131'
 
@@ -10,10 +11,10 @@ subsetDict:
 outDir: "../river-dl/data_DRB" 
 
 #suffix added to the end of the output files
-suffix: "no3558" 
-#suffix: ""
+#suffix: "no3558" 
+suffix: ""
 
 tarFiles: False 
 
-segsToExclude: [3558]
-#segsToExclude: []
+#segsToExclude: [3558]
+segsToExclude: []

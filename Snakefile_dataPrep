@@ -2,6 +2,7 @@ import os
 
 from getSciencebaseItems import get_sciencebase_data
 from makeArrays import makeArrays
+from makeDistanceMatrix import makeDistMatrix
 
 
 out_dir = config['outDir']
@@ -14,7 +15,6 @@ dataFileList = [os.path.splitext(x)[0] for x in config['itemDict'].keys()]
 
 suffix = "_"+config['suffix'] if config['suffix']!="" else ""
 
-
 rule all:
 	input:
 		expand("{outdir}/{dataFile}.csv",
@@ -23,7 +23,7 @@ rule all:
 			),
 		expand("{outdir}/{dataFile}_{subSet}{thisSuffix}",
 			outdir = out_dir,
-			dataFile = dataFileList,
+			dataFile = [x for x in dataFileList if not x.startswith("distance")],
 			subSet = subSetList,
                         thisSuffix = suffix,
 			sbFiles = config['itemDict'].keys()
@@ -33,13 +33,17 @@ rule all:
 			subSet = subSetList,
                         thisSuffix = suffix
 			),
+		expand("{outdir}/distance_matrix_drb_{subSet}{thisSuffix}.npz",
+			outdir = out_dir,
+			subSet = subSetList,
+                        thisSuffix = suffix)
 		
 
 rule fetch_data:
 	output:
 		"{outdir}/{dataFile}.csv"
 	run:
-		get_sciencebase_data(config['itemDict'][wildcards.dataFile+".zip"],wildcards.dataFile+".zip",wildcards.outdir, output[0])
+		get_sciencebase_data(config['itemDict'][[x for x in config['itemDict'].keys() if x.startswith(wildcards.dataFile)][0]],[x for x in config['itemDict'].keys() if x.startswith(wildcards.dataFile)][0],wildcards.outdir, output[0])
 
 		
 rule make_sntemp_arrays:
@@ -93,24 +97,13 @@ rule make_combined_arrays:
 		makeArrays("Obs_temp_flow_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'], suffix)
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+rule make_distance_matrix:
+	input:
+		os.path.join(out_dir,"distance_matrix_drb.csv")       
+	output:
+		expand("{outdir}/distance_matrix_drb_{subSet}{thisSuffix}.npz",
+			outdir = out_dir,
+			subSet = subSetList,
+                        thisSuffix = suffix)
+	run:
+		makeDistMatrix(input[0],subSetList,config['subsetDict'],out_dir, config['segsToExclude'], suffix)
