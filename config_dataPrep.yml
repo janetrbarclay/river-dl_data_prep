@@ -1,6 +1,7 @@
 itemDict:
     'sntemp_inputs_outputs_drb.zip': '5f6a289982ce38aaa2449135'
     'distance_matrix_drb.csv': '5f6a289982ce38aaa2449135'
+    'reach_attributes_drb.csv': '5f6a289982ce38aaa2449135'
     'temperature_observations_drb.zip': '5f6a287382ce38aaa2449131'
     'flow_observations_drb.zip': '5f6a287382ce38aaa2449131'
 

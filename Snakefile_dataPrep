@@ -23,7 +23,7 @@ rule all:
 			),
 		expand("{outdir}/{dataFile}_{subSet}{thisSuffix}",
 			outdir = out_dir,
-			dataFile = [x for x in dataFileList if not x.startswith("distance")],
+			dataFile = [x for x in dataFileList if not x.startswith("distance") and not x.startswith("reach")],
 			subSet = subSetList,
                         thisSuffix = suffix,
 			sbFiles = config['itemDict'].keys()
