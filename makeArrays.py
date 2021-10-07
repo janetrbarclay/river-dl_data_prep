@@ -9,6 +9,7 @@ import os
 import numpy as np
 import pandas as pd
 import xarray as xr
+from copy import deepcopy
 
 
 def tardir(path, tar_name):
@@ -57,8 +58,24 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
     #ensure the variables are reasonable
     for thisVar in qaDict.keys():
         if thisVar in tempDF.columns:
-            tempDF.loc[(tempDF[thisVar]<(qaDict[thisVar]["min"])),thisVar]=np.nan
-            tempDF.loc[(tempDF[thisVar]>(qaDict[thisVar]["max"])),thisVar]=np.nan
+            if qaDict[thisVar]["min"] is not False:
+                tempDF.loc[(tempDF[thisVar]<(qaDict[thisVar]["min"])),thisVar]=np.nan
+            if qaDict[thisVar]["max"] is not False:
+                tempDF.loc[(tempDF[thisVar]>(qaDict[thisVar]["max"])),thisVar]=np.nan
+            if qaDict[thisVar]["na_action"]:
+                colList = deepcopy(qaDict[thisVar]['na_by'])
+                colList.append(thisVar)
+                if len(qaDict[thisVar]['na_by'])>0:
+                    interpDF = tempDF.loc[~tempDF[thisVar].isnull(),colList].groupby(qaDict[thisVar]['na_by'], as_index=False).agg(qaDict[thisVar]['na_action'])
+                    tempDF = tempDF.merge(interpDF[colList],on=qaDict[thisVar]['na_by'],how="left")
+                    tempDF[thisVar + "_x"] = tempDF[thisVar + "_x"].fillna(tempDF[thisVar + "_y"])
+                    tempDF.drop(columns=thisVar + "_y",inplace=True)
+                    tempDF.rename(columns={thisVar + "_x":thisVar},inplace=True)
+                else:
+                    interpDF = tempDF.loc[~tempDF[thisVar].isnull(),colList].agg(qaDict[thisVar]['na_action'])
+                    tempDF.loc[tempDF[thisVar].isnull(),thisVar]=interpDF[thisVar]
+
+                    
         
 #    if "seg_tave_air" in tempDF.columns:
 #        tempDF.loc[(tempDF.seg_tave_air<(-50)),"seg_tave_air"]=np.nan
