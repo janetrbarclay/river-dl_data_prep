@@ -29,7 +29,11 @@ qaDict:
         na_action: 'mean' #method for interpolating for missing data, any pandas aggregation function or False (no interpolation)
         na_by: ['date'] #list of grouping columns for interpolation (seg_id_nat, date, etc)
         
-
+#this is a dictionary of variables to aggregate
+aggDict:
+    seg_width:
+        agg_level: 'seg_id_nat'
+        agg_function: 'mean' #any pandas aggregation function or False (no aggregation)
 
 outDir: "../river-dl/data_DRB" 
 

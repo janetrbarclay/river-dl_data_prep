@@ -19,7 +19,7 @@ def tardir(path, tar_name):
             for file in files:
                 tar_handle.add(os.path.join(root, file))
 
-def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles = False, outPath="",segsToExclude=[], suffix = "", qaDict={}):    
+def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles = False, outPath="",segsToExclude=[], suffix = "", qaDict={}, aggDict={}):    
     #read in the data
     tempDF = pd.read_csv(fileName[0].replace(".zip",".csv"))
     colsToDrop = ['subseg_id','site_id','in_time_holdout','in_space_holdout','test','min_temp_c',
@@ -74,7 +74,16 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
                 else:
                     interpDF = tempDF.loc[~tempDF[thisVar].isnull(),colList].agg(qaDict[thisVar]['na_action'])
                     tempDF.loc[tempDF[thisVar].isnull(),thisVar]=interpDF[thisVar]
-
+                    
+    #aggregate the variables as fitting
+    for thisVar in aggDict.keys():
+        if thisVar in tempDF.columns:
+            if aggDict[thisVar]['agg_function'] is not False:
+                aggValues = tempDF[[thisVar,aggDict[thisVar]['agg_level']]].groupby(aggDict[thisVar]['agg_level'],as_index=False).agg(aggDict[thisVar]['agg_function'])
+                aggValues.rename(columns={thisVar:thisVar+"_"+aggDict[thisVar]['agg_function']},inplace=True)
+                tempDF = tempDF.merge(aggValues,on=aggDict[thisVar]['agg_level'],how="left")
+                
+    print(tempDF.head())
                     
         
 #    if "seg_tave_air" in tempDF.columns:
@@ -82,17 +91,21 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
 #        tempDF.loc[(tempDF.seg_tave_air>(50)),"seg_tave_air"]=np.nan
         
     for thisCol in tempDF.columns:
+        print(thisCol)
         if thisCol!="seg_id_nat":
             outTxt = outTxt + "\n\n"+thisCol
             try:
                 outTxt = outTxt + "\n"+"Quartiles (including 0): "+str(np.nanpercentile(tempDF[thisCol],[0,25,50,75,100]))
                 outTxt = outTxt + "\n"+"Number of NA's: "+str(np.sum(tempDF[thisCol].isnull()))
                 outTxt = outTxt + "\n"+"Percent NA's: "+"{:.2%}".format(np.sum(tempDF[thisCol].isnull())/tempDF.shape[0])
+                print("all is good")
             except:
                 try:
                     outTxt = outTxt + "\n"+"Min: "+str(np.nanmin(tempDF[thisCol]))
                     outTxt = outTxt + "\n"+"Max: "+str(np.nanmax(tempDF[thisCol]))
+                    print("just min / max")
                 except:
+                    print("oh no")
                     pass
     
     for thisSubset in subSetList:
