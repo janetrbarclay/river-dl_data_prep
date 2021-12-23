@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 from copy import deepcopy
+from datetime import date
 
 
 def tardir(path, tar_name):
@@ -82,8 +83,6 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
                 aggValues = tempDF[[thisVar,aggDict[thisVar]['agg_level']]].groupby(aggDict[thisVar]['agg_level'],as_index=False).agg(aggDict[thisVar]['agg_function'])
                 aggValues.rename(columns={thisVar:thisVar+"_"+aggDict[thisVar]['agg_function']},inplace=True)
                 tempDF = tempDF.merge(aggValues,on=aggDict[thisVar]['agg_level'],how="left")
-                
-    print(tempDF.head())
                     
         
 #    if "seg_tave_air" in tempDF.columns:
@@ -91,21 +90,17 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
 #        tempDF.loc[(tempDF.seg_tave_air>(50)),"seg_tave_air"]=np.nan
         
     for thisCol in tempDF.columns:
-        print(thisCol)
         if thisCol!="seg_id_nat":
             outTxt = outTxt + "\n\n"+thisCol
             try:
                 outTxt = outTxt + "\n"+"Quartiles (including 0): "+str(np.nanpercentile(tempDF[thisCol],[0,25,50,75,100]))
                 outTxt = outTxt + "\n"+"Number of NA's: "+str(np.sum(tempDF[thisCol].isnull()))
                 outTxt = outTxt + "\n"+"Percent NA's: "+"{:.2%}".format(np.sum(tempDF[thisCol].isnull())/tempDF.shape[0])
-                print("all is good")
             except:
                 try:
                     outTxt = outTxt + "\n"+"Min: "+str(np.nanmin(tempDF[thisCol]))
                     outTxt = outTxt + "\n"+"Max: "+str(np.nanmax(tempDF[thisCol]))
-                    print("just min / max")
                 except:
-                    print("oh no")
                     pass
     
     for thisSubset in subSetList:
@@ -131,5 +126,5 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
             tardir(os.path.join(outPath,arrayName+"_full"+suffix),os.path.join(outPath,arrayName+"_full"+suffix+".tar"))
             
             
-    with open("log_%s%s.txt"%(arrayName,suffix),"w+") as f:
+    with open("log_%s%s_%s.txt"%(arrayName,suffix,date.today().strftime("%Y%m%d")),"w+") as f:
         f.write(outTxt)
