@@ -1,5 +1,5 @@
 itemDict:
-    'uncal_sntemp_input_output_drb.zip': '623e5587d34e915b67d83806' #downloaded from 623e5587d34e915b67d83806 and converted from netcdf to csv manually
+    'uncal_sntemp_input_output.zip': '623e5587d34e915b67d83806' #downloaded from 623e5587d34e915b67d83806 and converted from netcdf to csv manually
     'distance_matrix_drb.csv': '5f6a289982ce38aaa2449135'
     'reach_attributes_drb.csv': '5f6a289982ce38aaa2449135'
     'aggregated_temperature_observations_drb.zip': '623e550ad34e915b67d8366e' #downloaded from 623e550ad34e915b67d8366e
