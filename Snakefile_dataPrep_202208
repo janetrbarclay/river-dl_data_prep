@@ -23,7 +23,7 @@ rule all:
 			),
 		expand("{outdir}/{dataFile}_{subSet}{thisSuffix}",
 			outdir = out_dir,
-			dataFile = [x for x in dataFileList if not x.startswith("distance") and not x.startswith("reach")],
+			dataFile = ["{}_drb".format(x) if not x.endswith("drb") else x for x in dataFileList if not x.startswith("distance") and not x.startswith("reach")],
 			subSet = subSetList,
                         thisSuffix = suffix,
 			sbFiles = config['itemDict'].keys()
@@ -48,7 +48,7 @@ rule fetch_data:
 		
 rule make_sntemp_arrays:
 	input:
-		os.path.join(out_dir,"uncal_sntemp_input_output_drb.csv")
+		os.path.join(out_dir,"uncal_sntemp_input_output.csv")
 	output:
 		directory(expand("{outdir}/{dataFile}_{subSet}{thisSuffix}",
 			outdir = out_dir,
@@ -56,7 +56,7 @@ rule make_sntemp_arrays:
                         thisSuffix = suffix,
 			subSet = subSetList))
 	run:
-		makeArrays("uncal_sntemp_input_output_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'], suffix, config['qaDict'], config['aggDict'])
+		makeArrays("uncal_sntemp_input_output",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'], suffix, config['qaDict'], config['aggDict'])
 		
 rule make_temp_arrays:
 	input:
@@ -72,21 +72,21 @@ rule make_temp_arrays:
 		
 rule make_flow_arrays:
 	input:
-		os.path.join(out_dir,"flow_observations_drb_202205.csv")
+		os.path.join(out_dir,"flow_observations_drb.csv")
 	output:
 		directory(expand("{outdir}/{dataFile}_{subSet}{thisSuffix}",
 			outdir = out_dir,
-			dataFile = "flow_observations_drb_202205",
+			dataFile = "flow_observations_drb",
 			subSet = subSetList,
                         thisSuffix = suffix))
 	run:
-		makeArrays("flow_observations_drb_202205",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'],suffix, config['qaDict'], config['aggDict'])		
+		makeArrays("flow_observations_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'],suffix, config['qaDict'], config['aggDict'])		
 
 		
 rule make_combined_arrays:
 	input:
 		os.path.join(out_dir,"aggregated_temperature_observations_drb.csv"),
-		os.path.join(out_dir,"flow_observations_drb_202205.csv"),
+		os.path.join(out_dir,"flow_observations_drb.csv"),
 	output:
 		directory(expand("{outdir}/{dataFile}_{subSet}{thisSuffix}",
 			outdir = out_dir,

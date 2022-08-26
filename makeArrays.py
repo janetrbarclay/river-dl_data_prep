@@ -22,17 +22,18 @@ def tardir(path, tar_name):
 
 def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles = False, outPath="",segsToExclude=[], suffix = "", qaDict={}, aggDict={}):    
     #read in the data
-    tempDF = pd.read_csv(fileName[0].replace(".zip",".csv"))
+    tempDF = pd.read_csv(fileName[0] if fileName[0].endswith("csv") else fileName[0].replace(".zip",".csv"))
     colsToDrop = ['subseg_id','site_id','in_time_holdout','in_space_holdout','test','min_temp_c',
        'max_temp_c']
     if any([x in tempDF.columns for x in colsToDrop]):
         tempDF.drop(columns=colsToDrop, errors="ignore", inplace=True)
-        
+    #rename the date column, if needed
+    if "time" in tempDF.columns:
+        tempDF.rename(columns={"time":"date"}, inplace=True)
     #change the date formate
     if "date" in tempDF.columns:
         tempDF.date=tempDF.date.astype('datetime64[ns]')
 #        tempDF['date'] = pd.to_datetime(tempDF.date, utc=True)
-        
     if len(fileName)>1:
         for thisFile in fileName[1:]:
             tempDF2 = pd.read_csv(thisFile.replace(".zip",".csv"))
@@ -44,18 +45,14 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
             #this is repeated b/c they may have been introduced by the merge
             if any([x in tempDF.columns for x in colsToDrop]):
                 tempDF.drop(columns=colsToDrop, errors="ignore", inplace=True)
-
     #remove excluded segments
     tempDF = tempDF[~tempDF.seg_id_nat.isin(segsToExclude)]
-    
     #change the column name of water
     if "mean_temp_c" in tempDF.columns:
         tempDF.rename(columns={'mean_temp_c':'temp_c'},inplace=True)
-    
     outTxt = arrayName
     outTxt = outTxt + "\n\n"+"Data Summary"
     outTxt = outTxt + "\n\n"+"Number of rows: " + str(tempDF.shape[0])
-
     #ensure the variables are reasonable
     for thisVar in qaDict.keys():
         if thisVar in tempDF.columns:
@@ -75,7 +72,6 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
                 else:
                     interpDF = tempDF.loc[~tempDF[thisVar].isnull(),colList].agg(qaDict[thisVar]['na_action'])
                     tempDF.loc[tempDF[thisVar].isnull(),thisVar]=interpDF[thisVar]
-                    
     #aggregate the variables as fitting
     for thisVar in aggDict.keys():
         if thisVar in tempDF.columns:
@@ -84,7 +80,6 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
                 aggValues.rename(columns={thisVar:thisVar+"_"+aggDict[thisVar]['agg_function']},inplace=True)
                 tempDF = tempDF.merge(aggValues,on=aggDict[thisVar]['agg_level'],how="left")
                     
-        
 #    if "seg_tave_air" in tempDF.columns:
 #        tempDF.loc[(tempDF.seg_tave_air<(-50)),"seg_tave_air"]=np.nan
 #        tempDF.loc[(tempDF.seg_tave_air>(50)),"seg_tave_air"]=np.nan
@@ -102,7 +97,8 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
                     outTxt = outTxt + "\n"+"Max: "+str(np.nanmax(tempDF[thisCol]))
                 except:
                     pass
-    
+
+
     for thisSubset in subSetList:
         if thisSubset!="full":
             subsetDF = pd.read_csv(subsetDict[thisSubset])
@@ -110,21 +106,19 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
             nSegs = len(np.unique(tempDF_subset.seg_id_nat))
             nDates = len(np.unique(tempDF_subset.date))
             tempDF_subset.set_index(['date','seg_id_nat'],inplace=True, drop=True)
+            tempDF_subset.to_csv("temp.csv")
             tempArr_subset = tempDF_subset.to_xarray().chunk({'seg_id_nat':nSegs,'date':nDates})
+
             tempArr_subset.to_zarr(os.path.join(outPath,arrayName+"_"+thisSubset+suffix), mode='w')
-            
             if tarFiles:
                 tardir(os.path.join(outPath,arrayName+"_"+thisSubset+suffix),os.path.join(outPath,arrayName+"_"+thisSubset+suffix+".tar"))
-        
-    
     nSegs = len(np.unique(tempDF.seg_id_nat))
     nDates = len(np.unique(tempDF.date))
     tempDF.set_index(['date','seg_id_nat'],inplace=True, drop=True)
+    tempDF.to_csv("temp.csv")
     tempArr = tempDF.to_xarray().chunk({'seg_id_nat':nSegs,'date':nDates})
     tempArr.to_zarr(os.path.join(outPath,arrayName+"_full"+suffix), mode='w')
     if tarFiles:
             tardir(os.path.join(outPath,arrayName+"_full"+suffix),os.path.join(outPath,arrayName+"_full"+suffix+".tar"))
-            
-            
     with open("log_%s%s_%s.txt"%(arrayName,suffix,date.today().strftime("%Y%m%d")),"w+") as f:
         f.write(outTxt)
