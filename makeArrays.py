@@ -28,25 +28,32 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
     if any([x in tempDF.columns for x in colsToDrop]):
         tempDF.drop(columns=colsToDrop, errors="ignore", inplace=True)
     #rename the date column, if needed
-    if "time" in tempDF.columns:
+    if "time" in tempDF.columns and not "date" in tempDF.columns:
         tempDF.rename(columns={"time":"date"}, inplace=True)
     #change the date formate
     if "date" in tempDF.columns:
         tempDF.date=tempDF.date.astype('datetime64[ns]')
-#        tempDF['date'] = pd.to_datetime(tempDF.date, utc=True)
+    #convert the seg_id_nat to float
+    tempDF['seg_id_nat'] = tempDF.seg_id_nat.astype("float")
     if len(fileName)>1:
         for thisFile in fileName[1:]:
-            tempDF2 = pd.read_csv(thisFile.replace(".zip",".csv"))
+            tempDF2 = pd.read_csv(thisFile if thisFile.endswith("csv") else thisFile.replace(".zip",".csv"))
             #change the date formate
             if "date" in tempDF2.columns:
                 tempDF2.date=tempDF2.date.astype('datetime64[ns]')
 #                tempDF2['date'] = pd.to_datetime(tempDF2.date, utc=True)
+            #convert the seg_id_nat to int
+            tempDF2['seg_id_nat'] = tempDF2.seg_id_nat.astype("float")
+
             tempDF = tempDF.merge(tempDF2,how="outer", on=["seg_id_nat","date"])
             #this is repeated b/c they may have been introduced by the merge
             if any([x in tempDF.columns for x in colsToDrop]):
                 tempDF.drop(columns=colsToDrop, errors="ignore", inplace=True)
+    print(tempDF.head())
     #remove excluded segments
     tempDF = tempDF[~tempDF.seg_id_nat.isin(segsToExclude)]
+    print("gets this far")
+
     #change the column name of water
     if "mean_temp_c" in tempDF.columns:
         tempDF.rename(columns={'mean_temp_c':'temp_c'},inplace=True)
@@ -98,6 +105,7 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
                 except:
                     pass
 
+    print("gets to here")
 
     for thisSubset in subSetList:
         if thisSubset!="full":
