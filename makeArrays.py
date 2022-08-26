@@ -49,10 +49,8 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
             #this is repeated b/c they may have been introduced by the merge
             if any([x in tempDF.columns for x in colsToDrop]):
                 tempDF.drop(columns=colsToDrop, errors="ignore", inplace=True)
-    print(tempDF.head())
     #remove excluded segments
     tempDF = tempDF[~tempDF.seg_id_nat.isin(segsToExclude)]
-    print("gets this far")
 
     #change the column name of water
     if "mean_temp_c" in tempDF.columns:
@@ -105,7 +103,6 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
                 except:
                     pass
 
-    print("gets to here")
 
     for thisSubset in subSetList:
         if thisSubset!="full":
