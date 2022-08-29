@@ -125,5 +125,6 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
     tempArr.to_zarr(os.path.join(outPath,arrayName+"_full"+suffix), mode='w')
     if tarFiles:
             tardir(os.path.join(outPath,arrayName+"_full"+suffix),os.path.join(outPath,arrayName+"_full"+suffix+".tar"))
+
     with open("log_%s%s_%s.txt"%(arrayName,suffix,date.today().strftime("%Y%m%d")),"w+") as f:
         f.write(outTxt)

@@ -56,7 +56,7 @@ rule make_sntemp_arrays:
                         thisSuffix = suffix,
 			subSet = subSetList))
 	run:
-		makeArrays("uncal_sntemp_input_outputi_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'], suffix, config['qaDict'], config['aggDict'])
+		makeArrays("uncal_sntemp_input_output_drb",input,subSetList,config['subsetDict'],config['tarFiles'],out_dir, config['segsToExclude'], suffix, config['qaDict'], config['aggDict'])
 		
 rule make_temp_arrays:
 	input:

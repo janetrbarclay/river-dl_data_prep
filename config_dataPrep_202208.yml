@@ -36,7 +36,8 @@ aggDict:
         agg_level: 'seg_id_nat'
         agg_function: 'mean' #any pandas aggregation function or False (no aggregation)
 
-outDir: "../../../../caldera/projects/usgs/water/impd/pump/drb-gw-hw-temp/data_DRB" 
+#outDir: "../../../../caldera/projects/usgs/water/impd/pump/drb-gw-hw-temp/data_DRB" 
+outDir: "../river-dl/data_DRB"
 
 #suffix added to the end of the output files
 suffix: "no3558_202208" 
