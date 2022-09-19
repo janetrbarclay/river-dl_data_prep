@@ -52,9 +52,6 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
     #remove excluded segments
     tempDF = tempDF[~tempDF.seg_id_nat.isin(segsToExclude)]
 
-    #change the column name of water
-    if "mean_temp_c" in tempDF.columns:
-        tempDF.rename(columns={'mean_temp_c':'temp_c'},inplace=True)
     outTxt = arrayName
     outTxt = outTxt + "\n\n"+"Data Summary"
     outTxt = outTxt + "\n\n"+"Number of rows: " + str(tempDF.shape[0])
