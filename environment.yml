@@ -1,0 +1,15 @@
+name: rdl_dataPrep
+channels:
+    - conda-forge
+    - defaults
+    - bioconda
+dependencies:
+    - dask
+    - netcdf4
+    - pandas
+    - snakemake
+    - xarray
+    - pip
+    - zarr
+    - pip:
+          -sciencebasepy
