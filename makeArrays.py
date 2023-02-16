@@ -24,7 +24,8 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
     #read in the data
     tempDF = pd.read_csv(fileName[0] if fileName[0].endswith("csv") else fileName[0].replace(".zip",".csv"))
     colsToDrop = ['subseg_id','site_id','in_time_holdout','in_space_holdout','test','min_temp_c',
-       'max_temp_c']
+       'max_temp_c','Unnamed: 0']
+
     if any([x in tempDF.columns for x in colsToDrop]):
         tempDF.drop(columns=colsToDrop, errors="ignore", inplace=True)
     #rename the date column, if needed
@@ -119,6 +120,7 @@ def makeArrays(arrayName, fileName=[], subSetList=[""],subsetDict = {}, tarFiles
     tempDF.set_index(['date','seg_id_nat'],inplace=True, drop=True)
     tempDF.to_csv("temp.csv")
     tempArr = tempDF.to_xarray().chunk({'seg_id_nat':nSegs,'date':nDates})
+
     tempArr.to_zarr(os.path.join(outPath,arrayName+"_full"+suffix), mode='w')
     if tarFiles:
             tardir(os.path.join(outPath,arrayName+"_full"+suffix),os.path.join(outPath,arrayName+"_full"+suffix+".tar"))
